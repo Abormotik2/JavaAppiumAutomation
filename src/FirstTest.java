@@ -1,6 +1,5 @@
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -11,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,7 +37,7 @@ public class FirstTest {
   }
 
   @Test
-  public void firstTest() {
+  public void testWikiSearchResults() {
     waitForElementAndClick(
             By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
             "Cannot find 'Search Wikipedia' input",
@@ -50,7 +50,8 @@ public class FirstTest {
             5
     );
     waitForElementPresent(
-            By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+            By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                    "//*[@text='Object-oriented programming language']"),
             "Cannot find 'Object-oriented programming language' topic searching by 'Java'",
             15
     );
@@ -63,20 +64,17 @@ public class FirstTest {
             "Cannot find 'Search Wikipedia' input",
             5
     );
-
     waitForElementAndSendKeys(
             By.xpath("//*[contains(@text, 'Search…')]"),
             "Java",
             "Cannot find search input",
             5
     );
-
     waitForElementAndClear(By.id("org.wikipedia:id/search_src_text"),
             "Cannot find search field",
             5
 
     );
-
     waitForElementAndClick(
             By.id("org.wikipedia:id/search_close_btn"),
             "Cannot find X to cancel search",
@@ -84,6 +82,36 @@ public class FirstTest {
     );
     waitForElementNotPresent(By.id("org.wikipedia:id/search_close_btn"),
             "X is still present on the page",
+            5
+    );
+  }
+
+  @Test
+  public void testSearchResultsAndCancel() {
+    waitForElementAndClick(
+            By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+            "Cannot find 'Search Wikipedia' input",
+            5
+    );
+    waitForElementAndSendKeys(
+            By.xpath("//*[contains(@text, 'Search…')]"),
+            "Java",
+            "Cannot find search input",
+            5
+    );
+    waitForNumberOfElementsToBeMoreThan(
+            By.id("org.wikipedia:id/page_list_item_container"),
+            1,
+            "Count of articles less than expected",
+            5
+    );
+    waitForElementAndClick(
+            By.id("org.wikipedia:id/search_close_btn"),
+            "Cannot find X to cancel search",
+            5
+    );
+    waitForElementNotPresent(By.id("org.wikipedia:id/page_list_item_container"),
+            "The search results is still displayed",
             5
     );
   }
@@ -175,5 +203,13 @@ public class FirstTest {
     WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
     element.clear();
     return element;
+  }
+
+  private List<WebElement> waitForNumberOfElementsToBeMoreThan(By by, int num, String error_message, long timeoutInSeconds) {
+    WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+    wait.withMessage(error_message + "\n");
+    return wait.until(
+            ExpectedConditions.numberOfElementsToBeMoreThan(by, num)
+    );
   }
 }
