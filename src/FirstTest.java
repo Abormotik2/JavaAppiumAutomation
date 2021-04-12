@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class FirstTest {
 
@@ -117,6 +118,33 @@ public class FirstTest {
   }
 
   @Test
+  public void testSearchForEachResults() {
+    final String searchValue = "Java";
+    waitForElementAndClick(
+            By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+            "Cannot find 'Search Wikipedia' input",
+            5
+    );
+    waitForElementAndSendKeys(
+            By.xpath("//*[contains(@text, 'Search…')]"),
+            searchValue,
+            "Cannot find search input",
+            5
+    );
+    List<WebElement> articleTitles = waitForPresenceOfAllElementsLocated(
+            By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                    "//*[@resource-id='org.wikipedia:id/page_list_item_title']"),
+            "Cannot find any article title",
+            15);
+
+    articleTitles.stream()
+            .map(webElement -> webElement.getAttribute("text").toLowerCase())
+            .forEachOrdered(articleTitle -> assertTrue(
+                    "One or more titles do not have expected search text",
+                    articleTitle.contains(searchValue.toLowerCase())));
+  }
+
+  @Test
   public void testCompareArticleTitle() {
     waitForElementAndClick(
             By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
@@ -210,6 +238,14 @@ public class FirstTest {
     wait.withMessage(error_message + "\n");
     return wait.until(
             ExpectedConditions.numberOfElementsToBeMoreThan(by, num)
+    );
+  }
+
+  private List<WebElement> waitForPresenceOfAllElementsLocated(By by, String error_message, long timeoutInSeconds) {
+    WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+    wait.withMessage(error_message + "\n");
+    return wait.until(
+            ExpectedConditions.presenceOfAllElementsLocatedBy(by)
     );
   }
 }
