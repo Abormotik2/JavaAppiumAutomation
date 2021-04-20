@@ -32,6 +32,7 @@ public class FirstTest {
     capabilities.setCapability("appPackage", "org.wikipedia");
     capabilities.setCapability("appActivity", ".main.MainActivity");
     capabilities.setCapability("app", new File("./apks/org.wikipedia.apk").getCanonicalPath());
+    capabilities.setCapability("orientation", "PORTRAIT");
     driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
   }
 
