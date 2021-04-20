@@ -59,7 +59,6 @@ public class FirstTest {
     waitForElementAndClear(By.id("org.wikipedia:id/search_src_text"),
             "Cannot find search field",
             5
-
     );
     waitForElementAndClick(
             By.id("org.wikipedia:id/search_close_btn"),
@@ -364,6 +363,28 @@ public class FirstTest {
   }
 
   @Test
+  public void testArticleTitlePresence() {
+    final String search_value = "Reflection";
+    final String title_xpath = "//*[@resource-id='org.wikipedia:id/page_list_item_title'][@text='" + search_value + "']";
+    checkSearchInputSteps(search_value);
+    waitForNumberOfElementsToBeMoreThan(
+            By.xpath(title_xpath),
+            0,
+            "Count of articles less than expected",
+            15
+    );
+   waitForElementClickableAndClick(
+           By.xpath(title_xpath),
+           "The element not clickable",
+           10
+   );
+    assertElementPresent(
+            By.id("org.wikipedia:id/view_page_title_text"),
+            "Article not found"
+    );
+  }
+
+  @Test
   public void testAmountOfNotEmptySearch() {
     String search_line = "Linkin Park Diskography";
     checkSearchInputSteps(search_line);
@@ -502,6 +523,22 @@ public class FirstTest {
             actual_text);
   }
 
+  private boolean assertElementPresent(By by, String errorMessage) {
+    if (getAmountOfElements(by) > 0) {
+      return true;
+    } else {
+      throw new AssertionError(errorMessage);
+    }
+  }
+
+  private void assertElementNotPresent(By by, String error_message) {
+    int amount_of_elements = getAmountOfElements(by);
+    if (amount_of_elements > 0) {
+      String default_message = "An element " + by.toString() + " supposed to be not present";
+      throw new AssertionError(default_message + " " + error_message);
+    }
+  }
+
   private WebElement waitForElementPresent(By by, String error_message) {
     return waitForElementPresent(by, error_message, 5);
   }
@@ -513,30 +550,12 @@ public class FirstTest {
             ExpectedConditions.presenceOfElementLocated(by));
   }
 
-  private WebElement waitForElementAndClick(By by, String error_message, long timeoutInSeconds) {
-    WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
-    element.click();
-    return element;
-  }
-
-  private WebElement waitForElementAndSendKeys(By by, String value, String error_message, long timeoutInSeconds) {
-    WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
-    element.sendKeys(value);
-    return element;
-  }
-
   private boolean waitForElementNotPresent(By by, String error_message, long timeoutInSeconds) {
     WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
     wait.withMessage(error_message + "\n");
     return wait.until(
             ExpectedConditions.invisibilityOfElementLocated(by)
     );
-  }
-
-  private WebElement waitForElementAndClear(By by, String error_message, long timeoutInSeconds) {
-    WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
-    element.clear();
-    return element;
   }
 
   private List<WebElement> waitForNumberOfElementsToBeMoreThan(By by, int num, String error_message, long timeoutInSeconds) {
@@ -555,9 +574,44 @@ public class FirstTest {
     );
   }
 
+  private WebElement waitForElementClickable(By by, String error_message, long timeoutInSeconds) {
+    WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+    wait.withMessage(error_message);
+    return wait.until(ExpectedConditions.elementToBeClickable(by));
+  }
+
+  private WebElement waitForElementAndClick(By by, String error_message, long timeoutInSeconds) {
+    WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
+    element.click();
+    return element;
+  }
+
+  private WebElement waitForElementAndSendKeys(By by, String value, String error_message, long timeoutInSeconds) {
+    WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
+    element.sendKeys(value);
+    return element;
+  }
+
+  private WebElement waitForElementAndClear(By by, String error_message, long timeoutInSeconds) {
+    WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
+    element.clear();
+    return element;
+  }
+
   private String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeoutInSeconds) {
     WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
     return element.getAttribute(attribute);
+  }
+
+  private WebElement waitForElementClickableAndClick(By by, String error_message, long timeoutInSeconds) {
+    WebElement element = waitForElementClickable(by, error_message, timeoutInSeconds);
+    element.click();
+    return element;
+  }
+
+  private int getAmountOfElements(By by) {
+    List elements = driver.findElements(by);
+    return elements.size();
   }
 
   protected void swipeUp(int timeOfSwipe) {
@@ -604,18 +658,5 @@ public class FirstTest {
             .moveTo(left_x, middle_y)
             .release()
             .perform();
-  }
-
-  private int getAmountOfElements(By by) {
-    List elements = driver.findElements(by);
-    return elements.size();
-  }
-
-  private void assertElementNotPresent(By by, String error_message) {
-    int amount_of_elements = getAmountOfElements(by);
-    if (amount_of_elements > 0) {
-      String default_message = "An element " + by.toString() + " supposed to be not present";
-      throw new AssertionError(default_message + " " + error_message);
-    }
   }
 }
