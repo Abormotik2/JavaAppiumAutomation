@@ -2,6 +2,7 @@ package lib;
 
 import io.appium.java_client.android.AndroidDriver;
 import junit.framework.TestCase;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
@@ -23,13 +24,25 @@ public class CoreTestCase extends TestCase {
     capabilities.setCapability("appPackage", "org.wikipedia");
     capabilities.setCapability("appActivity", ".main.MainActivity");
     capabilities.setCapability("app", new File("./apks/org.wikipedia.apk").getCanonicalPath());
-    capabilities.setCapability("orientation", "PORTRAIT");
     driver = new AndroidDriver<>(new URL(AppiumURL), capabilities);
+    this.rotateScreenPortrait();
   }
 
   @Override
   protected void tearDown() throws Exception {
     driver.quit();
     super.tearDown();
+  }
+
+  protected void rotateScreenPortrait() {
+    driver.rotate(ScreenOrientation.PORTRAIT);
+  }
+
+  protected void rotateScreenLandscape() {
+    driver.rotate(ScreenOrientation.LANDSCAPE);
+  }
+
+  protected void backgroundApp(int seconds) {
+    driver.runAppInBackground(seconds);
   }
 }

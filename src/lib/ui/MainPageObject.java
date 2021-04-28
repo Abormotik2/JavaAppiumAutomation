@@ -109,11 +109,6 @@ public class MainPageObject {
     return element;
   }
 
-  public String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeoutInSeconds) {
-    WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
-    return element.getAttribute(attribute);
-  }
-
   public WebElement waitForElementClickableAndClick(By by, String error_message, long timeoutInSeconds) {
     WebElement element = waitForElementClickable(by, error_message, timeoutInSeconds);
     element.click();
