@@ -6,7 +6,7 @@ import lib.ui.SearchPageObject;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import java.util.List;
+import java.util.*;
 
 public class SearchTests extends CoreTestCase {
 
@@ -78,5 +78,16 @@ public class SearchTests extends CoreTestCase {
   public void testSearchForPlaceHolderText() {
     SearchPageObject searchPageObject = new SearchPageObject(driver);
     searchPageObject.assertSearchPlaceHolderText("Search Wikipedia");
+  }
+
+  public void testSearchArticleByTitleAndDescription() {
+    SearchPageObject searchPageObject = new SearchPageObject(driver);
+    searchPageObject.initSearchInput();
+    searchPageObject.typeSearchLine("Resident Evil");
+    List<String> article_titles = Arrays.asList("Resident Evil", "Resident Evil (film series)", "Resident Evil 7: Biohazard");
+    List<String> article_descriptions = Arrays.asList("Media franchise", "Film series", "2017 survival horror video game");
+    Map<String, String> expected_results = searchPageObject.setExpectedMapOfArticlesWithTitleAndDescription(article_titles, article_descriptions);
+    assertTrue("The count of articles less than expected", searchPageObject.getAmountOfFoundArticles() >= 3);
+    expected_results.forEach(searchPageObject::waitForElementByTitleAndDescription);
   }
 }

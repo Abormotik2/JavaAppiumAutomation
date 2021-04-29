@@ -3,6 +3,11 @@ package lib.ui;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class SearchPageObject extends MainPageObject {
 
   private static final String
@@ -15,7 +20,11 @@ public class SearchPageObject extends MainPageObject {
           SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']",
           SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']",
           SEARCH_LIST_ELEMENT = "org.wikipedia:id/page_list_item_container",
-          SEARCH_BUTTON = "//*[@resource-id='org.wikipedia:id/menu_page_search']";
+          SEARCH_BUTTON = "//*[@resource-id='org.wikipedia:id/menu_page_search']",
+          SEARCH_RESULT_BY_SUBSTRING_TITLE_AND_DESCRIPTION_TPL =
+                  "//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                          "[.//*[@resource-id='org.wikipedia:id/page_list_item_title'][@text='{ARTICLE_TITLE}']]" +
+                          "[.//*[@resource-id='org.wikipedia:id/page_list_item_description'][@text='{ARTICLE_DESCRIPTION}']]";
 
   public SearchPageObject(AppiumDriver driver) {
     super(driver);
@@ -26,8 +35,13 @@ public class SearchPageObject extends MainPageObject {
     return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
   }
 
-  private static String getResultSearchElementTitle(String articleTitle) {
-    return SEARCH_RESULT_TITLE_TPL.replace("{TITLE}", articleTitle);
+  private static String getResultSearchElementTitle(String article_title) {
+    return SEARCH_RESULT_TITLE_TPL.replace("{TITLE}", article_title);
+  }
+
+  private static String getArticleWithTitleAndDescription(String article_title, String article_description) {
+    return SEARCH_RESULT_BY_SUBSTRING_TITLE_AND_DESCRIPTION_TPL.replace("{ARTICLE_TITLE}", article_title)
+            .replace("{ARTICLE_DESCRIPTION}", article_description);
   }
   /* TEMPLATES METHODS */
 
@@ -53,7 +67,7 @@ public class SearchPageObject extends MainPageObject {
             5);
   }
 
-  public void waitForClickSearchButton(){
+  public void waitForClickSearchButton() {
     this.waitForElementAndClick(
             By.xpath(SEARCH_BUTTON),
             "Cannot find Search button",
@@ -157,5 +171,18 @@ public class SearchPageObject extends MainPageObject {
             By.xpath(article_title_xpath),
             "Article with title not clickable",
             5);
+  }
+
+  public void waitForElementByTitleAndDescription(String article_title, String article_description) {
+    String articleWithTitleAndDescriptionXpath = getArticleWithTitleAndDescription(article_title, article_description);
+    this.waitForElementPresent(
+            By.xpath(articleWithTitleAndDescriptionXpath),
+            "Cannot find article with title and description",
+            15
+    );
+  }
+
+  public Map<String, String> setExpectedMapOfArticlesWithTitleAndDescription(List<String> article_titles, List<String> article_descriptions) {
+    return IntStream.range(0, article_titles.size()).boxed().collect(Collectors.toMap(article_titles::get, article_descriptions::get, (a, b) -> b));
   }
 }
