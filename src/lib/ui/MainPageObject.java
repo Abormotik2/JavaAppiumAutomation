@@ -113,6 +113,13 @@ public class MainPageObject {
         return element;
     }
 
+    public WebElement waitForElementAndDoubleClick(String locator, String error_message, long timeoutInSeconds) {
+        WebElement element = waitForElementPresent(locator, error_message, timeoutInSeconds);
+        element.click();
+        element.click();
+        return element;
+    }
+
     public WebElement waitForElementAndSendKeys(String locator, String value, String error_message, long timeoutInSeconds) {
         WebElement element = waitForElementPresent(locator, error_message, timeoutInSeconds);
         element.sendKeys(value);

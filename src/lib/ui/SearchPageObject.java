@@ -80,6 +80,14 @@ abstract public class SearchPageObject extends MainPageObject {
         );
     }
 
+    public void doubleClickCancelSearch() {
+        this.waitForElementAndDoubleClick(
+                SEARCH_CANCEL_BUTTON,
+                "Cannot find and click search cancel button",
+                5
+        );
+    }
+
     public void typeSearchLine(String search_line) {
         this.waitForElementAndSendKeys(
                 SEARCH_INPUT,
@@ -104,11 +112,11 @@ abstract public class SearchPageObject extends MainPageObject {
 
     public int getAmountOfFoundArticles() {
         this.waitForElementPresent(
-                SEARCH_RESULT_LIST_ELEMENT,
+                SEARCH_RESULT_LIST_ITEM,
                 "Cannot find anything by the request",
                 15
         );
-        return this.getAmountOfElements(SEARCH_RESULT_LIST_ELEMENT);
+        return this.getAmountOfElements(SEARCH_RESULT_LIST_ITEM);
     }
 
     public void waitForEmptyResultsLabel() {
@@ -138,7 +146,7 @@ abstract public class SearchPageObject extends MainPageObject {
 
     public void waitForSearchResultsNotEmpty(int count_of_elements) {
         this.waitForNumberOfElementsToBeMoreThan(
-                SEARCH_RESULT_LIST_ELEMENT,
+                SEARCH_RESULT_LIST_ITEM,
                 count_of_elements,
                 "The search results more than " + count_of_elements + " or isn't displayed",
                 5
@@ -147,7 +155,7 @@ abstract public class SearchPageObject extends MainPageObject {
 
     public void waitForSearchResultsNotDisplayed() {
         this.waitForElementNotPresent(
-                SEARCH_RESULT_LIST_ELEMENT,
+                SEARCH_RESULT_LIST_ITEM,
                 "The search results is still displayed",
                 5
         );
