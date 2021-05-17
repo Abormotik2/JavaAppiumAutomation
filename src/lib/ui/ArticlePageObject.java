@@ -20,7 +20,8 @@ abstract public class ArticlePageObject extends MainPageObject {
             MY_LIST_OK_BUTTON,
             CLOSE_ARTICLE_BUTTON,
             BACK_BUTTON,
-            CREATED_FOLDER;
+            CREATED_FOLDER,
+            ARTICLE_BANNER_BY_TITLE_TPL;
 
     public ArticlePageObject(AppiumDriver driver) {
         super(driver);
@@ -28,6 +29,10 @@ abstract public class ArticlePageObject extends MainPageObject {
 
     private static String getCreatedFolderTitle(String name_of_folder) {
         return CREATED_FOLDER.replace("{NAME_OF_FOLDER}", name_of_folder);
+    }
+
+    private static String getBannerTitle(String substring) {
+        return ARTICLE_BANNER_BY_TITLE_TPL.replace("{TITLE}", substring);
     }
 
     public WebElement waitForTitleElement() {
@@ -41,6 +46,14 @@ abstract public class ArticlePageObject extends MainPageObject {
         return this.waitForPresenceOfAllElementsLocated(
                 LIST_TITLES,
                 "Cannot find any article title",
+                15);
+    }
+
+    public WebElement waitForBannerElement(String substring) {
+        String banner_xpath = getBannerTitle(substring);
+        return this.waitForElementLocated(
+                banner_xpath,
+                String.format("На странице баннер с текстом '%s' не найден.", substring),
                 15);
     }
 

@@ -7,20 +7,20 @@ import org.junit.Test;
 
 public class GetStartedTest extends CoreTestCase {
 
-    @Test
-    public void testPassThroughWelcome() {
-        if (Platform.getInstance().isAndroid()) return;
-        WelcomePageObject welcomePage = new WelcomePageObject(driver);
-        welcomePage.waitForLearnMoreLink();
-        welcomePage.clickNextButton();
+  @Test
+  public void testPassThroughWelcome() {
+    if (Platform.getInstance().isAndroid()) return;
+    WelcomePageObject welcomePage = new WelcomePageObject(driver);
+    welcomePage.waitForLearnMoreLink();
+    welcomePage.clickNextButton();
 
-        welcomePage.waitForNewWayToExploreText();
-        welcomePage.clickNextButton();
+    welcomePage.waitForNewWayToExploreText();
+    welcomePage.clickNextButton();
 
-        welcomePage.waitForAddOrEditPreferredLangText();
-        welcomePage.clickNextButton();
+    welcomePage.waitForAddOrEditPreferredLangText();
+    welcomePage.clickNextButton();
 
-        welcomePage.waitForLearnMoreAboutDataCollectedText();
-        welcomePage.clickGetStartedButton();
-    }
+    welcomePage.waitForLearnMoreAboutDataCollectedText();
+    welcomePage.clickGetStartedButton();
+  }
 }

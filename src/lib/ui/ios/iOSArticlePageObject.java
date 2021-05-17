@@ -11,6 +11,8 @@ public class iOSArticlePageObject extends ArticlePageObject {
         OPTIONS_ADD_TO_MY_LIST_BUTTON = "id:Save for later";
         CLOSE_ARTICLE_BUTTON = "id:Back";
         BACK_BUTTON = "xpath://XCUIElementTypeButton[@name='W']";
+        ARTICLE_BANNER_BY_TITLE_TPL = "xpath://XCUIElementTypeOther[@name='banner']" +
+                "//XCUIElementTypeStaticText[@name='{TITLE}']";
     }
 
     public iOSArticlePageObject(AppiumDriver driver) {
